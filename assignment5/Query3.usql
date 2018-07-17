@@ -1,0 +1,30 @@
+DECLARE @in  string = "/files/year_dwh1.csv";
+DECLARE @out string = "/output/out3.csv";
+
+@searchlog=
+    EXTRACT  
+        Tcs int,
+        Main string,
+        MidblockRoute string,
+        Side1Route string,
+        Side2Route string,
+        ActivationDate DateTime,
+        Latitude float,
+        Longitude float,
+        CountDate DateTime,
+        PeakHrVehicleVolume long,
+        PeakHrPedestrianVolume long,
+        weekday int,
+        year int,
+		VehiclePedestrianSum int
+FROM "/files/year_dwh1.csv"
+USING Extractors.Csv(encoding: Encoding.UTF8,skipFirstNRows:1);
+
+@rs1= 
+	SELECT year, SUM(PeakHrVehicleVolume+PeakHrPedestrianVolume) AS traffic 
+    FROM @searchlog
+    GROUP BY year ;
+
+OUTPUT @rs1 
+TO "output/result3.csv"
+ USING Outputters.Csv(outputHeader: true);
