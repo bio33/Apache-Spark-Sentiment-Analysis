@@ -1,0 +1,25 @@
+@searchlog=
+    EXTRACT  
+        Tcs int,
+        Main string,
+        MidblockRoute string,
+        Side_1_Route string,
+        Side_2_Route string,
+        Activation_Date DateTime,
+        Latitude float,
+        Longitude float,
+        Count_Date DateTime,
+        Peak_Hr_Vehicle_Volume long,
+        Peak_Hr_Pedestrian_Volume long
+FROM "/files/book1.csv"
+USING Extractors.Csv(encoding: Encoding.UTF8,skipFirstNRows:1);
+
+@rs1= 
+	SELECT Main, AVG(Peak_Hr_Vehicle_Volume) AS Peak_Hr_Vehicle_Volume_avg 
+    FROM @searchlog
+    GROUP BY Main ;
+
+
+OUTPUT @rs1 
+TO "output/temp.csv"
+ USING Outputters.Csv(outputHeader: true);

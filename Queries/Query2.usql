@@ -1,0 +1,27 @@
+@searchlog=
+    EXTRACT  
+        Tcs int,
+        Main string,
+        MidblockRoute string,
+        Side1Route string,
+        Side2Route string,
+        ActivationDate DateTime,
+        Latitude float,
+        Longitude float,
+        CountDate DateTime,
+        PeakHrVehicleVolume long,
+        PeakHrPedestrianVolume long
+FROM "dwh.csv"
+USING Extractors.Csv(encoding: Encoding.UTF8,skipFirstNRows:1);
+
+@rs1= 
+    SELECT Main,ActivationDate,(PeakHrVehicleVolume+PeakHrPedestrianVolume) AS total_traffic
+    FROM @searchlog
+    WHERE ActivationDate > DateTime.Parse("2010/01/01")
+    ORDER BY total_traffic DESC
+    FETCH 10 ROWS;
+
+
+OUTPUT @rs1 
+TO "output/temp.csv"
+ USING Outputters.Csv(outputHeader: true);

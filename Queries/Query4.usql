@@ -1,0 +1,27 @@
+@searchlog=
+    EXTRACT  
+        Tcs int,
+        Main string,
+        MidblockRoute string,
+        Side1Route string,
+        Side2Route string,
+        ActivationDate string,
+        Latitude float,
+        Longitude float,
+        CountDate string,
+        PeakHrVehicleVolume long,
+        PeakHrPedestrianVolume long,
+        weekday string
+FROM "week_dwh1.csv"
+USING Extractors.Csv(encoding: Encoding.UTF8,skipFirstNRows:1);
+
+
+@rs5 = 
+SELECT weekday,SUM(PeakHrVehicleVolume+PeakHrPedestrianVolume) AS traffic
+FROM @searchlog
+    GROUP BY weekday;
+ //   ORDER BY traffic DESC;
+
+OUTPUT @rs5
+TO "output/temp3.csv"
+ USING Outputters.Csv(outputHeader: true);
