@@ -1,4 +1,4 @@
 # Apache-Spark-Sentiment-Analysis
 
-by Deeksha Behara and Tushar Gupta
+by Tushar Gupta
 
